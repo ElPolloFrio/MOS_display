@@ -341,7 +341,7 @@ def processFromSavedFiles(mostype, staname, forceReprocess = 'False'):
 
 
 def setUpTheLogger():
-    # someone set us up the logger?
+    # someone set up us the logger?
     #
     # Even though logging does slow down the scripts, it's worth the
     # time penalty because a log facilitates troubleshooting, especially
