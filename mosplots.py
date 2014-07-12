@@ -242,7 +242,8 @@ def makeDisplayArrays(filename):
     # These variables are used below to construct display arrays for the given wxelements and data
     wxelements = []
     alldata = {}
-    
+
+    # find a way to consolidate these loops to avoid repetition
     count = 0
     for item in allxn:
         if len(item) == 0:

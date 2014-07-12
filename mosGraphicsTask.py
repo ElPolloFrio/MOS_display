@@ -38,6 +38,8 @@ dictTimeControl['6'] = ['MAV', 'MEX']
 dictTimeControl['12'] = ['MAV']
 dictTimeControl['15'] = ['MET']
 dictTimeControl['18'] = ['MAV', 'MEX']
+# Use this to cheat to force all graphics on an off hour.
+#dictTimeControl[str(rightnow.hour)] = ['MAV', 'MEX', 'MET']
 
 # Create the logger used by this script, GoGetFiles, and mosplots
 logger = mosHelper.setUpTheLogger()
@@ -57,6 +59,7 @@ sites = [CWAlist['LSX'],
          CWAlist['SGF'],
          CWAlist['EAX_lite'],
          CWAlist['ILX_lite'],
+         CWAlist['LIX_lite'],
          CWAlist['TEST']
          ]
 

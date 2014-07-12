@@ -189,6 +189,9 @@ def setStations():
 
     stalist['HNL'] = ['PHHI', 'PHIK', 'PHJH', 'PHJR', 'PHKO', 'PHLI', 'PHMK', 'PHNG', 'PHNL', 'PHNY', 'PHOG', 'PHSF', 'PHTO']
     stalist['HUN'] = ['KHSV', 'KMSL', 'KDCU', 'KMDQ', 'K4A9']        
+
+    stalist['LIX'] = ['KASD', 'KBTR', 'KHDC', 'KHUM', 'KMSY', 'KNBG', 'KNEW', 'KBIX', 'KGPT', 'KMCB', 'KPQL']
+    stalist['LIX_lite'] = ['KASD', 'KBTR', 'KMSY', 'KBIX', 'KGPT', 'KMCB']
         
     stalist['SJU'] = ['TJBQ', 'TJMZ', 'TJNR', 'TJPS', 'TJSJ']
     stalist['Caribbean'] = ['TIST', 'TISX', 'TKPK', 'TNCM', 'MUGM']
