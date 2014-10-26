@@ -69,7 +69,7 @@ def GrabEm():
                     # exists. This check fails if the file exists but is empty.
                     existingRawFiles = mosHelper.listRawFiles(mosname)
                     if localfilename in existingRawFiles:
-                        module_logger.info('Skipping %s becaues it already exists on disk', localfilename)
+                        module_logger.info('Skipping %s because it already exists on disk', localfilename)
                         pass
                     else:
                         fileurl = folderurl + '/' + fname
