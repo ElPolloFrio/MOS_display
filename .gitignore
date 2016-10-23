@@ -213,3 +213,17 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+#############
+## Project files
+#############
+
+images/
+jquery*/
+logs/
+processed_files/
+raw_files/
+student_proj/
+test*/
+*.xcf
+*.png
