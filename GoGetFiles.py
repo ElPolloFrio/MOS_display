@@ -114,23 +114,34 @@ def GrabEm():
 
                     # If there already exists a file with the intended localfilename,
                     # then don't bother downloading because the file probably already
-                    # exists. This check fails if the file exists but is empty.
+                    # exists. If the file is too small, try downloading it again.
                     existingRawFiles = mosHelper.listRawFiles(mosname)
                     if localfilename in existingRawFiles:
-                        module_logger.info('Skipping %s because it already exists on disk', localfilename)
-                        pass
-                    else:
-                        fileurl = folderurl + '/' + fname
-                        response = urllib2.urlopen(fileurl)
-                        contents = response.read()
-                        response.close()
+                        module_logger.info('{} already exists on disk.'.format(localfilename))
+                        fpath = os.path.join(dictDirNames['raw'], localfilename)
+                        # These are big files. Even a single station will make the file size
+                        # exceed ~1 kb. If the file is less than 1 kb, then something
+                        # went wrong last time and it needs to be downloaded again now.
+                        if os.path.getsize(fpath) > 1500:
+                            module_logger.info('Skipping. It\'s probably OK.')
+                            # 'continue': the current iteration of the loop terminates and
+                            # execution continues with the next iteration of the loop.
+                            continue
+                        else:
+                            module_logger.info('Downloading. It seems too small.')
+                        
+                    #else:
+                    fileurl = folderurl + '/' + fname
+                    response = urllib2.urlopen(fileurl)
+                    contents = response.read()
+                    response.close()
                     
-                        module_logger.info('Writing to %s', localfilename)
-                        fullname = os.path.join(dictDirNames['raw'], localfilename)
-                        output = open(fullname, 'w')
-                        output.write(contents)
-                        output.close()
-                        rawfiles.append(localfilename)
+                    module_logger.info('Writing to %s', localfilename)
+                    fullname = os.path.join(dictDirNames['raw'], localfilename)
+                    output = open(fullname, 'w')
+                    output.write(contents)
+                    output.close()
+                    rawfiles.append(localfilename)
 
     except urllib2.URLError:
         module_logger.warning('Lost the connection with MDL. Some files were not downloaded.')
