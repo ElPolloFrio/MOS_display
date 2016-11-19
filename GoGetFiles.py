@@ -36,6 +36,12 @@ def GrabEm():
                 'MET': 'ftp://ftp.ncep.noaa.gov/pub/data/nccf/com/nam/prod/'
                 }
 
+    # File sizes in kb. Multiply by 1000 to get file size in bytes needed for os.path.getsize.
+    dictFilesizeThresh = {'MAV': 250,
+                          'MET': 1000,
+                          'MEX': 1500
+                          }
+
     dictDirNames = mosHelper.getDirNames()
 
     # Use this to keep track of which files were written and still need
@@ -119,16 +125,18 @@ def GrabEm():
                     if localfilename in existingRawFiles:
                         module_logger.info('{} already exists on disk.'.format(localfilename))
                         fpath = os.path.join(dictDirNames['raw'], localfilename)
-                        # These are big files. Even a single station will make the file size
-                        # exceed ~1 kb. If the file is less than 1 kb, then something
-                        # went wrong last time and it needs to be downloaded again now.
-                        if os.path.getsize(fpath) > 1500:
+                        # If the file size is too low (see thresholds above), then
+                        # something went wrong last time the file was downloaded. Try
+                        # to download it again now so it will be available the next time
+                        # this script runs.
+                        thresh = dictFilesizeThresh[mosname] * 1000
+                        if os.path.getsize(fpath) > thresh:
                             module_logger.info('Skipping. It\'s probably OK.')
                             # 'continue': the current iteration of the loop terminates and
                             # execution continues with the next iteration of the loop.
                             continue
                         else:
-                            module_logger.info('Downloading. It seems too small.')
+                            module_logger.info('Downloading. The copy on disk seems too small.')
                         
                     #else:
                     fileurl = folderurl + '/' + fname
