@@ -26,11 +26,6 @@ def GrabEm():
     # XX = cycle (00 or 12) in UTC
     # This folder also contains files named 'mdl_nammme.tXXz'.
 
-    ## Look here for the MAV, MET, and MEX
-    #urls = ['ftp://tgftp.nws.noaa.gov/SL.us008001/DF.anf/DC.mos/DS.mav',
-    #    'ftp://tgftp.nws.noaa.gov/SL.us008001/DF.anf/DC.mos/DS.met',
-    #    'ftp://tgftp.nws.noaa.gov/SL.us008001/DF.anf/DC.mos/DS.mex']
-
     dictURLs = {'MAV': 'ftp://tgftp.nws.noaa.gov/SL.us008001/DF.anf/DC.mos/DS.mav',
                 'MEX': 'ftp://tgftp.nws.noaa.gov/SL.us008001/DF.anf/DC.mos/DS.mex',
                 'MET': 'ftp://ftp.ncep.noaa.gov/pub/data/nccf/com/nam/prod/'
@@ -49,10 +44,8 @@ def GrabEm():
     rawfiles = []
 
     try:
-        #for url in urls:
         for mosname in dictURLs:
             url = dictURLs[mosname]
-            #mosname = url[-3:]
             module_logger.info('Asking MDL for the %s', mosname)
             response = urllib2.urlopen(url)
             contents = response.read()
@@ -70,14 +63,12 @@ def GrabEm():
             if mosname is not 'MET':
                 RD = re.compile(r'RD\.[0-9]+')
                 folders = RD.findall(contents)
-                #module_logger.info('Found these folders: %s', folders)
             else:
                 RD = re.compile(r'nam_mos\.[0-9]+')
                 folders = RD.findall(contents)
             module_logger.info('Found these folders: %s', folders)
             
             for item in folders:
-                #folderurl = url + '/' + item + '/'
                 folderurl = '{}/{}/'.format(url, item)
                 response = urllib2.urlopen(folderurl)
                 contents = response.read()
@@ -92,7 +83,6 @@ def GrabEm():
                 # interest attm: 'mdl_nammet.tXXz', where XX is either '00' or '12'.
                 if mosname is not 'MET':
                     CY = re.compile(r'cy\.[0-9]+\.txt')
-                    #mosfiles = CY.findall(contents)
                 else:
                     CY = re.compile(r'mdl_nammet\.t[0-9][0-9]z')
                 mosfiles = CY.findall(contents)
@@ -101,8 +91,6 @@ def GrabEm():
                 for fname in mosfiles:
                     # Write to a local file with a meaningful name. ABCD is a placeholder b/c staname is
                     # undefined for raw files in mosHelper.makeFilenames.
-                    #localfilename = mosname + '-' + item[3:7] + '-' + item[7:9] + '-' + item[9:11] + '-' + fname[3:5] + 'z.txt'
-                    #dictFn = mosHelper.makeFilenames(mosname, 'ABCD', item[3:7], item[7:9], item[9:11], fname[3:5])
 
                     if mosname is not 'MET':
                         yr = item[3:7]
@@ -137,8 +125,7 @@ def GrabEm():
                             continue
                         else:
                             module_logger.info('Downloading. The copy on disk seems too small.')
-                        
-                    #else:
+                    
                     fileurl = folderurl + '/' + fname
                     response = urllib2.urlopen(fileurl)
                     contents = response.read()
