@@ -10,7 +10,7 @@ def getDirNames():
     
     # All the files and subfolders live here
     # LMK's laptop
-    dictDirNames['home'] = 'C:\\Users\\LMK\\Documents\\MOS_display'
+    dictDirNames['home'] = 'C:\\Users\\LMK\\Documents\\repos\\MOS_display'
     # X:\ testing
     #dictDirNames['home'] = 'X:\\9-Applications\\Content\\MosGraphics'
     # Fileserver scheduled task
