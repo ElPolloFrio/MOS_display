@@ -1,7 +1,7 @@
 import string, urllib2, re, os, logging, mosHelper
 
 # written Sep 2013
-# last updated: 23 Oct 2016
+# last updated: Nov 2016
 # Go get files from MDL and save them with meaningful filenames
 # Meaningful filename convention: NNN-YYYY-MM-DD-CCz.txt
 # NNN = 3 letter abbreviation (mex, met, mav)
