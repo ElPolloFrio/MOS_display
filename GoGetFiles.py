@@ -26,10 +26,34 @@ def GrabEm():
     # XX = cycle (00 or 12) in UTC
     # This folder also contains files named 'mdl_nammme.tXXz'.
 
+    # MDL also changed the folder structure for MAV and MEX:
+    # MAV:
+    # ftp://ftp.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfsmos.YYYYMMDD/mdl_gfsmav.tXXz
+    # MEX:
+    # ftp://ftp.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfsmos.YYYYMMDD/mdl_gfsmex.tXXz
+    # YYYYMMDD = year/month/day in UTC
+    # XX = cycle (00, 06, 12, or 18 for the MAV, 00 or 12 for the MEX and MET) in UTC
+
+    # There is also another source for MAV, MET, MEX, but the date and cycle are not present
+    # in all filenames.
+    # MAV:
+    # http://www.nws.noaa.gov/mdl/forecast/text/avnmav.txt
+    # MET:
+    # http://www.nws.noaa.gov/mdl/forecast/text/nammet.txt
+    # MEX:
+    # http://www.nws.noaa.gov/mdl/forecast/text/mrfmex00.txt
+    # http://www.nws.noaa.gov/mdl/forecast/text/mrfmex12.txt
+
     dictURLs = {'MAV': 'ftp://tgftp.nws.noaa.gov/SL.us008001/DF.anf/DC.mos/DS.mav',
                 'MEX': 'ftp://tgftp.nws.noaa.gov/SL.us008001/DF.anf/DC.mos/DS.mex',
                 'MET': 'ftp://ftp.ncep.noaa.gov/pub/data/nccf/com/nam/prod/'
                 }
+
+    backupURLS = ['http://www.nws.noaa.gov/mdl/forecast/text/avnmav.txt',
+                  'http://www.nws.noaa.gov/mdl/forecast/text/nammet.txt',
+                  'http://www.nws.noaa.gov/mdl/forecast/text/mrfmex00.txt',
+                  'http://www.nws.noaa.gov/mdl/forecast/text/mrfmex12.txt'
+                  ]
 
     # File sizes in kb. Multiply by 1000 to get file size in bytes needed for os.path.getsize.
     dictFilesizeThresh = {'MAV': 250,
