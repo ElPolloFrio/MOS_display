@@ -216,6 +216,7 @@ def setStations():
     stalist['PAH_lite'] = ['KCGI', 'KEVV', 'KMDH', 'KMVN', 'KPAH', 'KPOF']
     stalist['LOT'] = ['KARR', 'KC09', 'KDKB', 'KDPA', 'KGYY', 'KIGQ', 'KIKK', 'KJOT', 'KLOT', 'KMDW', 'KORD', 'KPNT', 'KPWK', 'KRFD', 'KRPJ', 'KUGN', 'KVPZ', 'KVYS']
     stalist['DVN'] = ['KAWG', 'KBRL', 'KC75', 'KCID', 'KCWI', 'KDBQ', 'KDVN', 'KEOK', 'KFEP', 'KFFL', 'KFSW', 'KIIB', 'KIOW', 'KMLI', 'KMPZ', 'KMQB', 'KMUT', 'KMXO', 'KSFY', 'KSQI', 'KVTI']
+    stalist['DVN_lite'] = ['KEOK', 'KDVN', 'KMQB', 'KFFL', 'KFEP']
     stalist['DMX'] = ['KADU', 'KAIO', 'KALO', 'KAMW', 'KAXA', 'KBNW', 'KCAV', 'KCIN', 'KCNC', 'KCSQ', 'KDNS', 'KDSM', 'KEBS', 'KEST', 'KFOD', 'KIKV', 'KLWD', 'KMCW', 'KMIW', 'KOTM', 'KOXV', 'KPEA', 'KTNU']
     stalist['MPX'] = ['KACQ', 'KAEL', 'KANE', 'KAQP', 'KAXN', 'KBBB', 'KCBG', 'KCFE', 'KDXX', 'KEAU', 'KFBL', 'KFCM', 'KFRM', 'KFSE', 'KGDB', 'KGHW', 'KGYL', 'KHCD', 'KJMR', 'KJYG', 'KLJF', 'KLUM', 'KLVN', 'KLXL', 'KMGG', 'KMIC', 'KMKT', 'KMOX', 'KMSP', 'KMVE', 'KOEO', 'KOVL', 'KOWA', 'KPNM', 'KRCX', 'KRGK', 'KRNH', 'KROS', 'KRPD', 'KRWF', 'KSGS', 'KSTC', 'KSTP', 'KSYN', 'KULM']
 

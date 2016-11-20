@@ -59,7 +59,9 @@ sites = [CWAlist['LSX'],
          CWAlist['SGF'],
          CWAlist['EAX_lite'],
          CWAlist['ILX_lite'],
-         CWAlist['LIX_lite'],
+         #CWAlist['LIX_lite'],
+         CWAlist['PAH_lite'],
+         CWAlist['DVN_lite'],
          CWAlist['TEST']
          ]
 
