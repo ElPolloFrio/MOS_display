@@ -213,6 +213,7 @@ def setStations():
     stalist['ILX'] = ['K1H2', 'KAAA', 'KAJG', 'KBMI', 'KCMI', 'KDEC', 'KDNV', 'KFOA', 'KGBG', 'KIJX', 'KLWV', 'KMTO', 'KOLY', 'KPIA', 'KPRG', 'KRSV', 'KSPI', 'KTAZ', 'KTIP']
     stalist['ILX_lite'] = ['K1H2', 'KBMI', 'KCMI', 'KFOA', 'KIJX', 'KPIA', 'KSPI', 'KTAZ']
     stalist['PAH'] = ['KCIR', 'KCGI', 'KCUL', 'KEHR', 'KEVV', 'KFWC', 'KHOP', 'KHSB', 'KM30', 'KMDH', 'KMVN', 'KMWA', 'KOWB', 'KPAH', 'KPOF']
+    stalist['PAH_lite'] = ['KCGI', 'KEVV', 'KMDH', 'KMVN', 'KPAH', 'KPOF']
     stalist['LOT'] = ['KARR', 'KC09', 'KDKB', 'KDPA', 'KGYY', 'KIGQ', 'KIKK', 'KJOT', 'KLOT', 'KMDW', 'KORD', 'KPNT', 'KPWK', 'KRFD', 'KRPJ', 'KUGN', 'KVPZ', 'KVYS']
     stalist['DVN'] = ['KAWG', 'KBRL', 'KC75', 'KCID', 'KCWI', 'KDBQ', 'KDVN', 'KEOK', 'KFEP', 'KFFL', 'KFSW', 'KIIB', 'KIOW', 'KMLI', 'KMPZ', 'KMQB', 'KMUT', 'KMXO', 'KSFY', 'KSQI', 'KVTI']
     stalist['DMX'] = ['KADU', 'KAIO', 'KALO', 'KAMW', 'KAXA', 'KBNW', 'KCAV', 'KCIN', 'KCNC', 'KCSQ', 'KDNS', 'KDSM', 'KEBS', 'KEST', 'KFOD', 'KIKV', 'KLWD', 'KMCW', 'KMIW', 'KOTM', 'KOXV', 'KPEA', 'KTNU']
@@ -228,7 +229,7 @@ def setStations():
     stalist['Caribbean'] = ['TIST', 'TISX', 'TKPK', 'TNCM', 'MUGM']
     stalist['Pacific'] = ['PMDY', 'NSTU']
 
-    stalist['TEST'] = ['PHNL', 'NSTU', 'KORD', 'PAJN', 'PABR', 'TIST', 'TJMZ', 'KGSH', 'KOUN', 'KONT']
+    stalist['TEST'] = ['PHNL', 'NSTU', 'KORD', 'PAJN', 'PABR', 'TIST', 'TJMZ', 'KGSH', 'KOUN', 'KONT', 'KASD']
 
     return(stalist)
 
