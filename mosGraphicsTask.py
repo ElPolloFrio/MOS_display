@@ -40,6 +40,14 @@ dictTimeControl['15'] = ['MET']
 dictTimeControl['18'] = ['MAV', 'MEX']
 # Use this to cheat to force all graphics on an off hour.
 #dictTimeControl[str(rightnow.hour)] = ['MAV', 'MEX', 'MET']
+#
+# The Windows Scheduler is on standard time. DST cheap trick.
+dictTimeControl['1'] = ['MAV']
+dictTimeControl['4'] = ['MET']
+dictTimeControl['7'] = ['MAV', 'MEX']
+dictTimeControl['13'] = ['MAV']
+dictTimeControl['16'] = ['MET']
+dictTimeControl['19'] = ['MAV', 'MEX']
 
 # Create the logger used by this script, GoGetFiles, and mosplots
 logger = mosHelper.setUpTheLogger()
