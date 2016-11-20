@@ -129,6 +129,37 @@ def load_file(filename):
     return data
 
 
+def getIssuance(data):
+    # data: raw text MOS output for one or more stations
+    #
+    # Returns a dictionary containing the station ID, MOS type, valid date, and cycle
+
+    dictResult = {}
+    staid = None
+    mostype = None
+    validdate = None
+    cycle = None
+
+    # Look for the first line which matches the following:
+    # AAAA (spaces) GFSX|NAM|GFS MOS GUIDANCE (spaces) DD/DD/DDDD CCCC UTC
+
+    for line in data:
+        if 'MOS GUIDANCE' in line:
+            temp = line.split('  ')
+            staid = temp[0]
+            mostype = temp[1].replace('MOS GUIDANCE', '').strip()
+            validdate = temp[2].strip()
+            cycle = temp[3].replace('UTC', '').strip()[0:2]
+            break
+
+    dictResult['STATION'] = staid
+    dictResult['MOS'] = mostype
+    dictResult['DATE'] = validdate
+    dictResult['CYCLE'] = cycle
+
+    return dictResult
+
+
 def parseStations(stalist, data):
     # 'stalist' is a list of station identifiers for which to create processed files
     # 'data' is a really big string as returned by load_file.
