@@ -49,11 +49,12 @@ def GrabEm():
                 'MET': 'ftp://ftp.ncep.noaa.gov/pub/data/nccf/com/nam/prod/'
                 }
 
-    backupURLS = ['http://www.nws.noaa.gov/mdl/forecast/text/avnmav.txt',
-                  'http://www.nws.noaa.gov/mdl/forecast/text/nammet.txt',
-                  'http://www.nws.noaa.gov/mdl/forecast/text/mrfmex00.txt',
-                  'http://www.nws.noaa.gov/mdl/forecast/text/mrfmex12.txt'
-                  ]
+    backupURLs = {'MAV': ['http://www.nws.noaa.gov/mdl/forecast/text/avnmav.txt'],
+                  'MEX': ['http://www.nws.noaa.gov/mdl/forecast/text/mrfmex00.txt',
+                          'http://www.nws.noaa.gov/mdl/forecast/text/mrfmex12.txt'
+                          ],
+                  'MET': ['http://www.nws.noaa.gov/mdl/forecast/text/nammet.txt']
+                  }
 
     # File sizes in kb. Multiply by 1000 to get file size in bytes needed for os.path.getsize.
     dictFilesizeThresh = {'MAV': 250,
