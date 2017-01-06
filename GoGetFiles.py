@@ -54,7 +54,6 @@ class MOS(object):
         # XX = cycle (00 or 12) in UTC
         # This folder also contains files named 'mdl_nammme.tXXz'.
 
-        # FutureDev:
         # MDL also changed the folder structure for MAV and MEX:
         # MAV:
         # ftp://ftp.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfsmos.YYYYMMDD/mdl_gfsmav.tXXz
@@ -63,8 +62,8 @@ class MOS(object):
         # YYYYMMDD = year/month/day in UTC
         # XX = cycle (00, 06, 12, or 18 for the MAV, 00 or 12 for the MEX and MET) in UTC
         
-        dictURLs = {'MAV': 'ftp://tgftp.nws.noaa.gov/SL.us008001/DF.anf/DC.mos/DS.mav',
-                    'MEX': 'ftp://tgftp.nws.noaa.gov/SL.us008001/DF.anf/DC.mos/DS.mex',
+        dictURLs = {'MAV': 'ftp://ftp.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/',
+                    'MEX': 'ftp://ftp.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/',
                     'MET': 'ftp://ftp.ncep.noaa.gov/pub/data/nccf/com/nam/prod/'
                     }
 
@@ -79,21 +78,18 @@ class MOS(object):
             contents = response.read()
             response.close()
 
-            # For MAV and MEX:
-            # Each FTP directory contains at most 2 folders: RD.YYYYMMDD (RD.20130909),
-            # although it used to contain a much longer archive.
-            # Find the RD.######## section(s) of the string to get the folder names.
-            #
-            # For MET:
-            # The FTP directory contains many folders, only two of which are of interest.
-            # These folders are named 'nam_mos.YYYYMMDD', where YYYYMMDD is the UTC date
-            # of the MOS run.
-            if mosname is not 'MET':
-                RD = re.compile(r'RD\.[0-9]+')
-                folders = RD.findall(contents)
-            else:
-                RD = re.compile(r'nam_mos\.[0-9]+')
-                folders = RD.findall(contents)
+            # The FTP directories contain many folders, only 2 of which are of
+            # interest: 'gfsmos.YYYYMMDD' (MAV, MEX) and 'nam_mos.YYYYMMDD' (MET),
+            # where YYYMMDD is the UTC date of the MOS run.
+
+            if mosname is 'MET':
+                re_folder = r'nam_mos\.[0-9]+'
+            elif mosname in ['MAV', 'MEX']:
+                re_folder = r'gfsmos\.[0-9]+'
+            # FutureDev: better error handling here?
+    
+            RD = re.compile(re_folder)
+            folders = RD.findall(contents)
 
             #print 'Found these folders: %s' % (folders)
 
@@ -102,18 +98,22 @@ class MOS(object):
                 response = urllib2.urlopen(folderurl)
                 contents = response.read()
                 response.close()
-                
-                # For MAV, MEX:
-                # Each folder contains at most 4 files: cy.CC.txt (cy.00.txt, etc.)
-                # Find the cy.##.txt section(s) of the string to get the filenames.
-                #
-                # For MET:
-                # Each of those folders contains up to 4 files, only two of which are of
-                # interest attm: 'mdl_nammet.tXXz', where XX is either '00' or '12'.
-                if mosname is not 'MET':
-                    CY = re.compile(r'cy\.[0-9]+\.txt')
-                else:
-                    CY = re.compile(r'mdl_nammet\.t[0-9][0-9]z')
+
+                # Each of these folders contains multiple files (and possibly more folders).
+                # The files of interest follow these filenames:
+                # ftp://ftp.ncep.noaa.gov/pub/data/nccf/com/nam/prod/nam_mos.YYYYMMDD/mdl_nammet.tXXz
+                # ftp://ftp.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfsmos.YYYYMMDD/mdl_gfsmav.tXXz
+                # ftp://ftp.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfsmos.YYYYMMDD/mdl_gfsmex.tXXz
+                # XX = cycle (00, 06, 12, or 18 for the MAV, 00 or 12 for the MEX and MET) in UTC
+
+                if mosname is 'MET':
+                    re_filename = r'mdl_nammet\.t[0-9][0-9]z'
+                elif mosname is 'MAV':
+                    re_filename = r'mdl_gfsmav\.t[0-9][0-9]z'
+                elif mosname is 'MEX':
+                    re_filename = r'mdl_gfsmex\.t[0-9][0-9]z'
+
+                CY = re.compile(re_filename)
                 mosfiles = CY.findall(contents)
                 #print '%s has these files: %s' %(item, mosfiles)
 
@@ -125,17 +125,11 @@ class MOS(object):
                     # Construct the local filename. ABCD is a placeholder value
                     # because 'staname' is undefined for raw files in
                     # mosHelper.makeFilenames.
-                    if mosname is not 'MET':
-                        yr = item[3:7]
-                        mon = item[7:9]
-                        dy = item[9:11]
-                        cycle = fname[3:5]
-                    else:
-                        base = item.split('.')[1]
-                        yr = base[0:4]
-                        mon = base[4:6]
-                        dy = base[6:8]
-                        cycle = fname.split('.')[1][1:3]
+                    base = item.split('.')[1]
+                    yr = base[0:4]
+                    mon = base[4:6]
+                    dy = base[6:8]
+                    cycle = fname.split('.')[1][1:3]
                         
                     dictFn = mosHelper.makeFilenames(mosname, 'ABCD', yr, mon, dy, cycle)
                     localfilename = dictFn['raw']
