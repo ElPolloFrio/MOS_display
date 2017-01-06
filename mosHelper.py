@@ -146,6 +146,14 @@ def getIssuance(data):
     for line in data:
         if 'MOS GUIDANCE' in line:
             temp = line.split('  ')
+            # This is really dumb. Surely there's a better way. What happens
+            # is there's an extra space for single digit months, so splitting
+            # on '  ' (2 spaces) means there's an extra element in 'temp'
+            # because of the extra space before the month digit. That screws
+            # up the rest of the indexing and causes the script to bomb out
+            # and not download the files. Oops.
+            if '' in temp:
+                temp.remove('')
             staid = temp[0]
             mostype = temp[1].replace('MOS GUIDANCE', '').strip()
             validdate = temp[2].strip()
