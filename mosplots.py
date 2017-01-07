@@ -139,11 +139,17 @@ def yoinkFromMOS(data, wxelement):
     # 'FHR': forecast hour or equivalent
     # 'XN': max/min or min/max
     # 'P12': PoP12
+    # 'WSP': wind speed
 
-    dictWxElements = {}
-    dictWxElements['FHR'] = ['FHR', 'HR']
-    dictWxElements['XN'] = ['X/N', 'N/X']
-    dictWxElements['P12'] = ['P12']
+    dictWxElements = {'FHR': ['FHR', 'HR'],
+                      'XN': ['X/N', 'N/X'],
+                      'P12': ['P12'],
+                      'WSP': ['WSP', 'WND']
+                      }
+    #dictWxElements['FHR'] = ['FHR', 'HR']
+    #dictWxElements['XN'] = ['X/N', 'N/X']
+    #dictWxElements['P12'] = ['P12']
+    #dictWxElements['WSP'] = ['WSP', 'WND']
 
     # Check that wxelement has been defined before proceeding.
     # if wxelement not in dictWxElements.keys(), then fail gracefully
@@ -212,6 +218,7 @@ def makeDisplayArrays(filename):
     #allf = []
     allxn = []
     allp12 = []
+    allwsp = []
     for fn in prevfiles:
         try:
             fullname2 = os.path.join(dictDirNames['proc'], fn)
@@ -219,17 +226,20 @@ def makeDisplayArrays(filename):
             #fhr = yoinkFromMOS(dd, 'FHR')
             xn = yoinkFromMOS(dd, 'XN')
             p12 = yoinkFromMOS(dd, 'P12')
+            wsp = yoinkFromMOS(dd, 'WSP')
             # As a side note, fhr, xn, p12 will have length 0 if the
             # wxelement was not found in MOS. This matters later.
             #allf.append(fhr)
             allxn.append(xn)
             allp12.append(p12)
+            allwsp.append(wsp)
         except:
             # If the file does not exist, use empty np arrays as placeholders
             # On reflection, this may not be an entirely kosher use of try/except. Read up on this.
             #allf.append(np.array([]))
             allxn.append(np.array([]))
             allp12.append(np.array([]))
+            allwsp.append(np.array([]))
 
     # At this point, if the wxelement was not found in that MOS type (e.g., NSTU has no
     # X/N line in the MAV), then allElem will be an array whose elements each have size 0.
@@ -261,6 +271,14 @@ def makeDisplayArrays(filename):
     if count < len(allp12):
         wxelements.append('P12')
         alldata['P12'] = allp12
+
+    count = 0
+    for item in allwsp:
+        if len(item) == 0:
+            count = count + 1
+    if count < len(allwsp):
+        wxelements.append('WSP')
+        alldata['WSP'] = allwsp
 
     # Make life easy by using keys that are constructed from information returned by find_info.
     modelKey = infoDict['MOSTYPE'] + ' ' + infoDict['RUNTIME']
@@ -335,12 +353,14 @@ def makeDisplayArrays(filename):
         'GFSX MOS GUIDANCE 0000 UTC':{ #MEX 00z
             'X':{'size':[15,8], 'start':0, 'stop':15, 'step':2, 'jump':1, 'firsthr':24},
             'N':{'size':[1,8], 'start':1, 'stop':14, 'step':2, 'jump':np.nan, 'firsthr':12},
-            'P12':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24}
+            'P12':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24},
+            'WSP':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24}
             },
         'GFSX MOS GUIDANCE 1200 UTC':{ #MEX 12z
             'X':{'size':[1,8], 'start':1, 'stop':14, 'step':2, 'jump':np.nan, 'firsthr':12},
             'N':{'size':[15,8], 'start':0, 'stop':15, 'step':2, 'jump':1, 'firsthr':24},
-            'P12':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24}
+            'P12':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24},
+            'WSP':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24}
             }
         }
 
@@ -429,7 +449,8 @@ def makeDisplayArrays(filename):
         # Create the fcst valid date/time entries for the x-axis labels.
         thisrun = thisrun_as_dt(infoDict)
         tempdt = []
-        if wx == 'P12':
+        #if wx == 'P12':
+        if wx in ['P12', 'WSP']:
             fcsthrs = range(dictSize[origKey][wx]['firsthr'], 216, 12)
         else:
             fcsthrs = range(dictSize[origKey][wx]['firsthr'], 216, 24)
@@ -553,6 +574,29 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
             #if vmax % 2 == 1:
             #    vmax = vmax - 1   
             #cbarticks = np.arange(vmin, vmax+1, cbarstep)
+            
+        elif wx == 'WSP':
+
+            cbarstep = 10
+            vmin = 0
+            vmax = 30
+            
+            # Create a new colormap based on a subset of an existing colormap. Thanks,
+            # StackOverflow!
+            cmap = plt.get_cmap('YlOrBr')
+            minval = 0.0
+            maxval = 0.8
+            n = 100
+            new_cmap = mcolors.LinearSegmentedColormap.from_list('trunc({n},{a:.2f},{b:.2f})'.format(n=cmap.name, a = minval, b = maxval), cmap(np.linspace(minval, maxval, n)))
+
+            # Set the "over" color so it stands out like a beacon
+            new_cmap.set_over('blueviolet')
+            
+            cmap = new_cmap
+
+            figsize = (14,10)
+            cbarticks = np.arange(vmin, vmax + cbarstep, cbarstep)
+            
         else:
             # good luck
             cmap = plt.cm.Blues
@@ -578,7 +622,7 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
                     plt.text(c, r, int(plotthis[r,c]), fontsize = 20, horizontalalignment = 'center', verticalalignment = 'center')
 
         # Add a descriptive title
-        wxnames = {'X':'MaxT', 'N':'MinT', 'P12':'PoP12'}
+        wxnames = {'X':'MaxT', 'N':'MinT', 'P12':'PoP12', 'WSP': 'WindSpd'}
         strTitle = info['STANAME'] + ' ' + info['MOSTYPE'] + '\n' + info['RUNDATE'] + ' ' + info['RUNTIME'] + ' ' + wxnames[wx]
         plt.title(strTitle)
 
