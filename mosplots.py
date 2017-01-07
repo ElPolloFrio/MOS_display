@@ -291,6 +291,7 @@ def makeDisplayArrays(filename):
     # jump = count by this many to go from start to the first index of the next row (e.g., ECE X: first row begins with 0, next row begins with 2, therefore jump = 2)
     # These indices assume no leading 'X/N', which is OK because the leading label is dropped in the loops below.
     # firsthr = the first fcst of this element in the array is fcst at this many hours from the model cycle (e.g., ECE 00z X is 24, ECE 00z N is 36, MEX 12z X is 12 (even though the entry is blank), etc.)
+    # xstep = number of hours to increment to generate x-axis labels
     #
     # For the MAV, jump has 2 values: what's needed to get to first index of the next line and
     # what's needed to get to the first index of the line after that. MAV is special because
@@ -309,58 +310,61 @@ def makeDisplayArrays(filename):
     # stop = index of the last element of that first special line (+/-1 for Python slicing)
     # step = count by this many to go from start to stop for that first special line
     # jump = nan
+    
     dictSize = { # ~ahem~
         'ECMX MOS GUIDANCE 0000 UTC':{ #ECE 00z
-            'X':{'size':[8,8], 'start':0, 'stop':15, 'step':2, 'jump':2, 'firsthr':24},
-            'N':{'size':[7,7], 'start':1, 'stop':14, 'step':2, 'jump':2, 'firsthr':36},
-            'P12':{'size':[8,15], 'start':0, 'stop':15, 'step':1, 'jump':2, 'firsthr':24}
+            'X':{'size':[8,8], 'start':0, 'stop':15, 'step':2, 'jump':2, 'firsthr':24, 'xstep': 24},
+            'N':{'size':[7,7], 'start':1, 'stop':14, 'step':2, 'jump':2, 'firsthr':36, 'xstep': 24},
+            'P12':{'size':[8,15], 'start':0, 'stop':15, 'step':1, 'jump':2, 'firsthr':24, 'xstep': 12}
             }, 
         'ECM MOS GUIDANCE 0000 UTC':{ #ECS 00z
-            'X':{'size':[3,3], 'start':0, 'stop':5, 'step':2, 'jump':2, 'firsthr':24},
-            'N':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':12},
-            'P12':{'size':[3,5], 'start':0, 'stop':5, 'step':1, 'jump':2, 'firsthr':24}
+            'X':{'size':[3,3], 'start':0, 'stop':5, 'step':2, 'jump':2, 'firsthr':24, 'xstep': 24},
+            'N':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':12, 'xstep': 24},
+            'P12':{'size':[3,5], 'start':0, 'stop':5, 'step':1, 'jump':2, 'firsthr':24, 'xstep': 12}
             },
         'GFS MOS GUIDANCE 0000 UTC':{ #MAV 00z
-            'X':{'size':[9,3], 'start':0, 'stop':5, 'step':2, 'jump':[1,0], 'firsthr':24},
-            'N':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':12},
-            'P12':{'size':[9,5], 'start':0, 'stop':5, 'step':1, 'jump':[1,0], 'firsthr':24}
+            'X':{'size':[9,3], 'start':0, 'stop':5, 'step':2, 'jump':[1,0], 'firsthr':24, 'xstep': 24},
+            'N':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':12, 'xstep': 24},
+            'P12':{'size':[9,5], 'start':0, 'stop':5, 'step':1, 'jump':[1,0], 'firsthr':24, 'xstep': 12}
             },
         'GFS MOS GUIDANCE 0600 UTC':{ #MAV 06z
-            'X':{'size':[10,3], 'start':0, 'stop':5, 'step':2, 'jump':[0,1], 'firsthr':18},
-            'N':{'size': [1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':6},
-            'P12':{'size':[10,5], 'start':0, 'stop':5, 'step':1, 'jump':[0,1], 'firsthr':18}
+            'X':{'size':[10,3], 'start':0, 'stop':5, 'step':2, 'jump':[0,1], 'firsthr':18, 'xstep': 24},
+            'N':{'size': [1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':6, 'xstep': 24},
+            'P12':{'size':[10,5], 'start':0, 'stop':5, 'step':1, 'jump':[0,1], 'firsthr':18, 'xstep': 12}
             },
         'GFS MOS GUIDANCE 1200 UTC':{ #MAV 12z
-            'X':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':12},
-            'N':{'size':[9,3], 'start':0, 'stop':5, 'step':2, 'jump':[1,0], 'firsthr':24},
-            'P12':{'size':[9,5], 'start':0, 'stop':5, 'step':1, 'jump':[1,0], 'firsthr':24}
+            'X':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':12, 'xstep': 24},
+            'N':{'size':[9,3], 'start':0, 'stop':5, 'step':2, 'jump':[1,0], 'firsthr':24, 'xstep': 24},
+            'P12':{'size':[9,5], 'start':0, 'stop':5, 'step':1, 'jump':[1,0], 'firsthr':24, 'xstep': 12}
             },
         'GFS MOS GUIDANCE 1800 UTC':{ #MAV 18z
-            'X':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':6},
-            'N':{'size':[10,3], 'start':0, 'stop':5, 'step':2, 'jump':[0,1], 'firsthr':18},
-            'P12':{'size':[10,5], 'start':0, 'stop':5, 'step':1, 'jump':[0,1], 'firsthr':18}
+            'X':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':6, 'xstep': 24},
+            'N':{'size':[10,3], 'start':0, 'stop':5, 'step':2, 'jump':[0,1], 'firsthr':18, 'xstep': 24},
+            'P12':{'size':[10,5], 'start':0, 'stop':5, 'step':1, 'jump':[0,1], 'firsthr':18, 'xstep': 12}
             },
         'NAM MOS GUIDANCE 0000 UTC':{ #MET 00z
-            'X':{'size':[5,3], 'start':0, 'stop':5, 'step':2, 'jump':1, 'firsthr':24},
-            'N':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':12},
-            'P12':{'size':[5,5], 'start':0, 'stop':5, 'step':1, 'jump':1, 'firsthr':24}
+            'X':{'size':[5,3], 'start':0, 'stop':5, 'step':2, 'jump':1, 'firsthr':24, 'xstep': 24},
+            'N':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':12, 'xstep': 24},
+            'P12':{'size':[5,5], 'start':0, 'stop':5, 'step':1, 'jump':1, 'firsthr':24, 'xstep': 12},
+            'WSP':{'size':[5,19], 'start':0, 'stop':19, 'step':1, 'jump':4, 'firsthr':6, 'xstep': 3}
             },
         'NAM MOS GUIDANCE 1200 UTC':{ #MET 12z
-            'X':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':12},
-            'N':{'size':[5,3], 'start':0, 'stop':5, 'step':2, 'jump':1, 'firsthr':24},
-            'P12':{'size':[5,5], 'start':0, 'stop':5, 'step':1, 'jump':1, 'firsthr':24}
+            'X':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':12, 'xstep': 24},
+            'N':{'size':[5,3], 'start':0, 'stop':5, 'step':2, 'jump':1, 'firsthr':24, 'xstep': 24},
+            'P12':{'size':[5,5], 'start':0, 'stop':5, 'step':1, 'jump':1, 'firsthr':24, 'xstep': 12},
+            'WSP':{'size':[5,19], 'start':0, 'stop':19, 'step':1, 'jump':4, 'firsthr':6, 'xstep': 3}
             },
         'GFSX MOS GUIDANCE 0000 UTC':{ #MEX 00z
-            'X':{'size':[15,8], 'start':0, 'stop':15, 'step':2, 'jump':1, 'firsthr':24},
-            'N':{'size':[1,8], 'start':1, 'stop':14, 'step':2, 'jump':np.nan, 'firsthr':12},
-            'P12':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24},
-            'WSP':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24}
+            'X':{'size':[15,8], 'start':0, 'stop':15, 'step':2, 'jump':1, 'firsthr':24, 'xstep': 24},
+            'N':{'size':[1,8], 'start':1, 'stop':14, 'step':2, 'jump':np.nan, 'firsthr':12, 'xstep': 24},
+            'P12':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24, 'xstep': 12},
+            'WSP':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24, 'xstep': 12}
             },
         'GFSX MOS GUIDANCE 1200 UTC':{ #MEX 12z
-            'X':{'size':[1,8], 'start':1, 'stop':14, 'step':2, 'jump':np.nan, 'firsthr':12},
-            'N':{'size':[15,8], 'start':0, 'stop':15, 'step':2, 'jump':1, 'firsthr':24},
-            'P12':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24},
-            'WSP':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24}
+            'X':{'size':[1,8], 'start':1, 'stop':14, 'step':2, 'jump':np.nan, 'firsthr':12, 'xstep': 24},
+            'N':{'size':[15,8], 'start':0, 'stop':15, 'step':2, 'jump':1, 'firsthr':24, 'xstep': 24},
+            'P12':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24, 'xstep': 12},
+            'WSP':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24, 'xstep': 12}
             }
         }
 
@@ -447,13 +451,15 @@ def makeDisplayArrays(filename):
                 jumpindex = jumpindex + dictSize[modelKey][wx]['jump']
 
         # Create the fcst valid date/time entries for the x-axis labels.
+        # The x-axis labels increase differently depending on the wx element
+        # and the MOS type. 
         thisrun = thisrun_as_dt(infoDict)
         tempdt = []
-        #if wx == 'P12':
-        if wx in ['P12', 'WSP']:
-            fcsthrs = range(dictSize[origKey][wx]['firsthr'], 216, 12)
-        else:
-            fcsthrs = range(dictSize[origKey][wx]['firsthr'], 216, 24)
+        #if wx in ['P12', 'WSP']:
+        #    fcsthrs = range(dictSize[origKey][wx]['firsthr'], 216, 12)
+        #else:
+        #    fcsthrs = range(dictSize[origKey][wx]['firsthr'], 216, 24)
+        fcsthrs = range(dictSize[origKey][wx]['firsthr'], 216, dictSize[origKey][wx]['xstep'])
         for hr in fcsthrs:
             future = dt.timedelta(hours = hr)
             tempdt.append(thisrun + future)
