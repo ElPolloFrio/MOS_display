@@ -508,6 +508,32 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
     # already called mosHelper.setUpTheLogger().
     module_logger = logging.getLogger('mosgraphics.makePlots')
 
+    def determineFigureSize(wxkey, mostype):
+        # wxkey: (string) X, N, P12, WSP, etc.
+        # mostype: (string) info['MOSTYPE'].replace('MOS GUIDANCE', '').strip()
+        
+        # Figure size depends on both MOS type and wx element.
+        figgy = (0, 0)
+
+        dictFigSize = {
+            'X': (7, 10),
+            'N': (7, 10),
+            'P12': (14, 10),
+            'WSP': {
+                'GFSX': (14, 10),
+                'NAM': (12, 6),
+                'GFS': (14, 7),
+            }
+        }
+
+        if wxkey in ['X', 'N', 'P12']:
+            figgy = dictFigSize[wxkey]
+        else:
+            figgy = dictFigSize[wxkey][mostype]
+
+        return figgy
+        
+
     for wx in displayArrays.keys():
         if wx == 'P12':
             # Pop12 spans from 0 to 100. No matter what values are actually present,
@@ -548,7 +574,8 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
             cmap = p12map
             vmin = 0
             vmax = 100
-            figsize = (14,10)
+            #figsize = (14,10)
+            figsize = determineFigureSize(wx, info['MOSTYPE'].replace('MOS GUIDANCE', '').strip())
             cbarticks = np.arange(0, 110, 10)
         elif ((wx == 'X') or (wx == 'N')):
             # For MaxT and MinT, let matplotlib autoscale based on the values in the data.
@@ -556,7 +583,8 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
             cmap = plt.cm.RdYlBu_r
             vmin = np.nanmin(displayArrays[wx])
             vmax = np.nanmax(displayArrays[wx])
-            figsize = (7,10)
+            #figsize = (7,10)
+            figsize = determineFigureSize(wx, info['MOSTYPE'].replace('MOS GUIDANCE', '').strip())
             # For large temp ranges, the color bar scale can get pretty crowded. For small
             # temp ranges, the default algorithm creates decimal degrees which aren't
             # meaningful. To address this, declare that if the range is big (20 degrees),
@@ -604,7 +632,8 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
             
             cmap = new_cmap
 
-            figsize = (14,10)
+            #figsize = (14,10)
+            figsize = determineFigureSize(wx, info['MOSTYPE'].replace('MOS GUIDANCE', '').strip())
             cbarticks = np.arange(vmin, vmax + cbarstep, cbarstep)
             
         else:
@@ -612,7 +641,7 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
             cmap = plt.cm.Blues
             vmin = np.nanmin(displayArrays[wx])
             vmax = np.nanmax(displayArrays[wx])
-            figsize = (7,10)
+            figsize = (10,10)
             cbarticks = np.arange(vmin, vmax, 5)
         
         plotthis = displayArrays[wx]
