@@ -325,22 +325,26 @@ def makeDisplayArrays(filename):
         'GFS MOS GUIDANCE 0000 UTC':{ #MAV 00z
             'X':{'size':[9,3], 'start':0, 'stop':5, 'step':2, 'jump':[1,0], 'firsthr':24, 'xstep': 24},
             'N':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':12, 'xstep': 24},
-            'P12':{'size':[9,5], 'start':0, 'stop':5, 'step':1, 'jump':[1,0], 'firsthr':24, 'xstep': 12}
+            'P12':{'size':[9,5], 'start':0, 'stop':5, 'step':1, 'jump':[1,0], 'firsthr':24, 'xstep': 12},
+            'WSP':{'size':[10,19], 'start':0, 'stop':19, 'step':1, 'jump':2, 'firsthr':6, 'xstep': 3}
             },
         'GFS MOS GUIDANCE 0600 UTC':{ #MAV 06z
             'X':{'size':[10,3], 'start':0, 'stop':5, 'step':2, 'jump':[0,1], 'firsthr':18, 'xstep': 24},
             'N':{'size': [1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':6, 'xstep': 24},
-            'P12':{'size':[10,5], 'start':0, 'stop':5, 'step':1, 'jump':[0,1], 'firsthr':18, 'xstep': 12}
+            'P12':{'size':[10,5], 'start':0, 'stop':5, 'step':1, 'jump':[0,1], 'firsthr':18, 'xstep': 12},
+            'WSP':{'size':[10,19], 'start':0, 'stop':19, 'step':1, 'jump':2, 'firsthr':6, 'xstep': 3}
             },
         'GFS MOS GUIDANCE 1200 UTC':{ #MAV 12z
             'X':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':12, 'xstep': 24},
             'N':{'size':[9,3], 'start':0, 'stop':5, 'step':2, 'jump':[1,0], 'firsthr':24, 'xstep': 24},
-            'P12':{'size':[9,5], 'start':0, 'stop':5, 'step':1, 'jump':[1,0], 'firsthr':24, 'xstep': 12}
+            'P12':{'size':[9,5], 'start':0, 'stop':5, 'step':1, 'jump':[1,0], 'firsthr':24, 'xstep': 12},
+            'WSP':{'size':[10,19], 'start':0, 'stop':19, 'step':1, 'jump':2, 'firsthr':6, 'xstep': 3}
             },
         'GFS MOS GUIDANCE 1800 UTC':{ #MAV 18z
             'X':{'size':[1,3], 'start':1, 'stop':4, 'step':2, 'jump':np.nan, 'firsthr':6, 'xstep': 24},
             'N':{'size':[10,3], 'start':0, 'stop':5, 'step':2, 'jump':[0,1], 'firsthr':18, 'xstep': 24},
-            'P12':{'size':[10,5], 'start':0, 'stop':5, 'step':1, 'jump':[0,1], 'firsthr':18, 'xstep': 12}
+            'P12':{'size':[10,5], 'start':0, 'stop':5, 'step':1, 'jump':[0,1], 'firsthr':18, 'xstep': 12},
+            'WSP':{'size':[10,19], 'start':0, 'stop':19, 'step':1, 'jump':2, 'firsthr':6, 'xstep': 3}
             },
         'NAM MOS GUIDANCE 0000 UTC':{ #MET 00z
             'X':{'size':[5,3], 'start':0, 'stop':5, 'step':2, 'jump':1, 'firsthr':24, 'xstep': 24},
