@@ -106,7 +106,7 @@
 			$("input[type='radio']:checked").each(function(index) {
 				arrDisp[index] = ($(this).val());
 			});
-			strDivID = arrDisp[0] + '-' + arrDisp[1];
+			var strDivID = arrDisp[0] + '-' + arrDisp[1];
 			// hide the other images
 			$('.imageset').hide();
 			// show the appropriate image
