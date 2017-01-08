@@ -17,16 +17,79 @@
 	<script src="jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 	
 	<script>
+		// These variables are re-used multiple times.
+		// Notes:
+		// Image names follow this format: STAID_MOS_WxElement.png
+		var mostypes = ['MEX', 'MAV', 'MET'];
+		var mos_names = ['GFSX', 'GFS', 'NAM']; // these values for the radio buttons match the divset ID
+		var wxtypes = ['X/N', 'P12', 'WSPD'];
+		var wx_names = ['XN', 'P12', 'WSPD']; // these values for the radio buttons match the divset ID
 		
-		// FutureDev: use learning from DSS calendar project to generate elements programmatically instead of hard-coding the names (radio buttons
-		// and image divs)
-	
+		// These next 3 variables must have the same length.
+		var wxelem = ['MaxT', 'MinT', 'PoP12', 'WindSpd']; //components of the image filenames
+		var wxelem_parent = ['XN', 'XN', 'P12', 'WSPD']; // these should match entries in wx_names
+		// Images sizes are given as [width, height]
+		var img_sizes = [[375, 600], [375, 600], [800, 600], [800, 600]];
+
+		// Generate a set of divs for images and append them to the display area
 		$(function() {
-			$('#radiomos').buttonset();
-			$('#radioelement').buttonset();
+			for (m in mos_names) {
+				for (w in wx_names) {
+					var div_id = mos_names[m] + '-' + wx_names[w];
+					var newdiv = '<div id="' + div_id + '" class="imageset"></div>';
+					$('div#displayarea').append(newdiv);
+				} // wx_names loop
+				
+				// Add images to the newly created divs
+				for (el in wxelem) {
+					var img_id = mos_names[m] + '_' + wxelem[el];
+					var w = img_sizes[el][0];
+					var h = img_sizes[el][1];
+					var newimg = '<img id="' + img_id + '" src="" alt="" width="' + w + '" height="' + h + '">';
+					$(newimg).appendTo('div#' + mos_names[m] + '-' + wxelem_parent[el]);
+				} // wxelem loop
+			} //mos loop
+		});
+
+		// Helper function to generate radio boxes (input elements for forms). 
+		function populateRadioInputs(init_val, input_set, lbl_set, val_set, container) {
+			// init_val: (string) value which should be initially marked "checked"
+			// input_set: (array) variable over which to loop (one radio input for each item in this set)
+			// lbl_set: (array) variable which contains label values for the radio buttons
+			// val_set: (array) variable which contains value values for the radio buttons
+			// container: (string) jQuery selector for the container which holds the radio buttons
+			var init = init_val;
+			for (i in input_set) {
+				var radio_id = 'radio-' + input_set[i];
+				var lbl = lbl_set[i];
+				var val = val_set[i];
+				if (val == init) {
+					checked = 'checked="checked"';
+				} else {
+					checked = '';
+				}
+				var newelement = '<input type="radio" id="' + radio_id + '" name="radio" value="' + val + '"' + checked + '/><label for="' + radio_id + '">' + lbl + '</label>';
+				$(container).append(newelement);
+			}
+		};
+		
+		// Populate the form with options for each MOS type. Initialize with the "MEX" button checked (its value is "GFSX")
+		$(function() {
+			populateRadioInputs('GFSX', mostypes, mostypes, mos_names, 'div#radio_mos');
+		});
+
+		// Populate the form with options for each wx element. Initialize with "P12" checked.
+		$(function() {
+			populateRadioInputs('P12', wxtypes, wxtypes, wx_names, 'div#radio_wxelement');
+		});
+
+		// Turn the options into buttonsets
+		$(function() {
+			$('#radio_mos').buttonset();
+			$('#radio_wxelement').buttonset();
 		});
 		
-		// initially hide all images
+		// Initially hide all images
 		$(function() {
 			$('.imageset').hide();
 			// Run updateImages so that the first images will show up as soon as a site is selected,
@@ -81,14 +144,12 @@
 
 		function loadImagesBySiteID(siteID) {
 			$('h1#sid').text(siteID);
-			mostypes = new Array('GFSX', 'GFS', 'NAM');
-			elements = new Array('MaxT', 'MinT', 'PoP12', 'WindSpd');
-			for (m in mostypes) {
-				for (el in elements) {
-					fname = generateImgFilename(siteID, mostypes[m], elements[el]);
-					var key = 'img#' + mostypes[m] + '_' + elements[el];
+			for (m in mos_names) {
+				for (el in wxelem) {
+					var fname = generateImgFilename(siteID, mos_names[m], wxelem[el]);
+					var key = 'img#' + mos_names[m] + '_' + wxelem[el];
 					$(key).attr({src: fname, alt: ''});
-				} //element loop
+				} //wx element loop
 			} //mos loop
 		};
 
@@ -225,18 +286,10 @@
 	<!-- define the value to be equal to the portion of the div id for the imageset -->
 	<div id="container4controls">
 		<form>
-			<div id="radiomos">
-				<input type="radio" id="radio-GFSX" name="radio" value='GFSX' checked="checked" /><label for="radio-GFSX">MEX</label>
-				<input type="radio" id="radio-GFS" name="radio" value='GFS' /><label for="radio-GFS">MAV</label>
-				<input type="radio" id="radio-NAM" name="radio" value='NAM' /><label for="radio-NAM">MET</label>
-			</div>
+			<div id="radio_mos"></div>
 		</form>
 		<form>
-			<div id="radioelement">
-				<input type="radio" id="radio-XN" name="radio" value='XN' /><label for="radio-XN">X/N</label>
-				<input type="radio" id="radio-P12" name="radio" value='P12' checked="checked" /><label for="radio-P12">P12</label>
-				<input type="radio" id="radio-WSPD" name="radio" value='WSPD' /><label for="radio-WSPD">WSPD</label>
-			</div>
+			<div id="radio_wxelement"></div>
 		</form>
 	</div>
 
@@ -440,37 +493,7 @@
 	</ul>
 	
 	<!-- display area for graphics -->
-	<div id="displayarea">
-		<div id="GFSX-XN" class="imageset">
-			<img id="GFSX_MaxT" src="" alt="" width="375" height="600">
-			<img id="GFSX_MinT" src="" alt="" width="375" height="600">
-		</div>
-		<div id="GFSX-P12" class="imageset">
-			<img id="GFSX_PoP12" src="" alt="" width="800" height="600">
-		</div>
-		<div id="GFSX-WSPD" class="imageset">
-			<img id="GFSX_WindSpd" src="" alt="" width="800" height="600">
-		</div>
-
-		<div id="GFS-XN" class="imageset">
-			<img id="GFS_MaxT" src="" alt="" width="375" height="600">
-			<img id="GFS_MinT" src="" alt="" width="375" height="600">
-		</div>
-		<div id="GFS-P12" class="imageset">
-			<img id="GFS_PoP12" src="" alt="" width="800" height="600">
-		</div>
-	
-		<div id="NAM-XN" class="imageset">
-			<img id="NAM_MaxT" src="" alt="" width="375" height="600">
-			<img id="NAM_MinT" src="" alt="" width="375" height="600">
-		</div>
-		<div id="NAM-P12" class="imageset">
-			<img id="NAM_PoP12" src="" alt="" width="800" height="600">
-		</div>
-		<div id="NAM-WSPD" class="imageset">
-			<img id="NAM_WindSpd" src="" alt="" width="800" height="600">
-		</div>
-	</div>
+	<div id="displayarea"></div>
 
 </body>
 
