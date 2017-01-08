@@ -30,6 +30,8 @@
 		var wxelem_parent = ['XN', 'XN', 'P12', 'WSPD']; // these should match entries in wx_names
 		// Images sizes are given as [width, height]
 		var img_sizes = [[375, 600], [375, 600], [800, 600], [800, 600]];
+		// Special handling for wind speed images, which vary based on MOS type
+		var img_wspd = {'GFSX': [800, 600], 'GFS': [800, 400], 'NAM': [800, 400]};
 
 		// Generate a set of divs for images and append them to the display area
 		$(function() {
@@ -43,12 +45,18 @@
 				// Add images to the newly created divs
 				for (el in wxelem) {
 					var img_id = mos_names[m] + '_' + wxelem[el];
-					var w = img_sizes[el][0];
-					var h = img_sizes[el][1];
+					if (wxelem[el] == 'WindSpd') {
+						w = img_wspd[mos_names[m]][0];
+						h = img_wspd[mos_names[m]][1];
+					} else {
+						w = img_sizes[el][0];
+						h = img_sizes[el][1];
+					};
 					var newimg = '<img id="' + img_id + '" src="" alt="" width="' + w + '" height="' + h + '">';
 					$(newimg).appendTo('div#' + mos_names[m] + '-' + wxelem_parent[el]);
 				} // wxelem loop
 			} //mos loop
+			
 		});
 
 		// Helper function to generate radio boxes (input elements for forms). 
