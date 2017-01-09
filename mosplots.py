@@ -532,9 +532,14 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
             figgy = dictFigSize[wxkey][mostype]
 
         return figgy
-        
+    
 
     for wx in displayArrays.keys():
+
+        # Default is to extend neither side of the colorbar, but some wx elements
+        # will alter this.
+        extend = 'neither'
+        
         if wx == 'P12':
             # Pop12 spans from 0 to 100. No matter what values are actually present,
             # always use the same color curve for displaying those values.
@@ -629,6 +634,7 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
 
             # Set the "over" color so it stands out like a beacon
             new_cmap.set_over('blueviolet')
+            extend = 'max'
             
             cmap = new_cmap
 
@@ -689,7 +695,7 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
         #cax = divider.append_axes('right', '5%', pad = '3%')
         # use a constant size and padding (units are inches) for a uniform look among plots
         cax = divider.append_axes('right', size = 0.25, pad = 0.2)
-        cbar = plt.colorbar(im, cax = cax, ticks = cbarticks)
+        cbar = plt.colorbar(im, cax = cax, extend = extend, ticks = cbarticks)
 
         plt.rcParams['font.size'] = 12
         plt.tight_layout()
