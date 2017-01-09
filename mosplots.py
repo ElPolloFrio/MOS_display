@@ -140,16 +140,14 @@ def yoinkFromMOS(data, wxelement):
     # 'XN': max/min or min/max
     # 'P12': PoP12
     # 'WSP': wind speed
+    # 'Q12': 12-hr QPF categories
 
     dictWxElements = {'FHR': ['FHR', 'HR'],
                       'XN': ['X/N', 'N/X'],
                       'P12': ['P12'],
-                      'WSP': ['WSP', 'WND']
+                      'WSP': ['WSP', 'WND'],
+                      'Q12': ['Q12']
                       }
-    #dictWxElements['FHR'] = ['FHR', 'HR']
-    #dictWxElements['XN'] = ['X/N', 'N/X']
-    #dictWxElements['P12'] = ['P12']
-    #dictWxElements['WSP'] = ['WSP', 'WND']
 
     # Check that wxelement has been defined before proceeding.
     # if wxelement not in dictWxElements.keys(), then fail gracefully
@@ -219,6 +217,7 @@ def makeDisplayArrays(filename):
     allxn = []
     allp12 = []
     allwsp = []
+    allq12 = []
     for fn in prevfiles:
         try:
             fullname2 = os.path.join(dictDirNames['proc'], fn)
@@ -227,12 +226,14 @@ def makeDisplayArrays(filename):
             xn = yoinkFromMOS(dd, 'XN')
             p12 = yoinkFromMOS(dd, 'P12')
             wsp = yoinkFromMOS(dd, 'WSP')
+            q12 = yoinkFromMOS(dd, 'Q12')
             # As a side note, fhr, xn, p12 will have length 0 if the
             # wxelement was not found in MOS. This matters later.
             #allf.append(fhr)
             allxn.append(xn)
             allp12.append(p12)
             allwsp.append(wsp)
+            allq12.append(q12)
         except:
             # If the file does not exist, use empty np arrays as placeholders
             # On reflection, this may not be an entirely kosher use of try/except. Read up on this.
@@ -240,6 +241,7 @@ def makeDisplayArrays(filename):
             allxn.append(np.array([]))
             allp12.append(np.array([]))
             allwsp.append(np.array([]))
+            allq12.append(np.array([]))
 
     # At this point, if the wxelement was not found in that MOS type (e.g., NSTU has no
     # X/N line in the MAV), then allElem will be an array whose elements each have size 0.
@@ -279,6 +281,14 @@ def makeDisplayArrays(filename):
     if count < len(allwsp):
         wxelements.append('WSP')
         alldata['WSP'] = allwsp
+
+    count = 0
+    for item in allq12:
+        if len(item) == 0:
+            count = count + 1
+    if count < len(allq12):
+        wxelements.append('Q12')
+        alldata['Q12'] = allq12
 
     # Make life easy by using keys that are constructed from information returned by find_info.
     modelKey = infoDict['MOSTYPE'] + ' ' + infoDict['RUNTIME']
@@ -362,13 +372,15 @@ def makeDisplayArrays(filename):
             'X':{'size':[15,8], 'start':0, 'stop':15, 'step':2, 'jump':1, 'firsthr':24, 'xstep': 24},
             'N':{'size':[1,8], 'start':1, 'stop':14, 'step':2, 'jump':np.nan, 'firsthr':12, 'xstep': 24},
             'P12':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24, 'xstep': 12},
-            'WSP':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24, 'xstep': 12}
+            'WSP':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24, 'xstep': 12},
+            'Q12':{'size':[12,12], 'start':0, 'stop':12, 'step':1, 'jump':1, 'firsthr':24, 'xstep': 12}
             },
         'GFSX MOS GUIDANCE 1200 UTC':{ #MEX 12z
             'X':{'size':[1,8], 'start':1, 'stop':14, 'step':2, 'jump':np.nan, 'firsthr':12, 'xstep': 24},
             'N':{'size':[15,8], 'start':0, 'stop':15, 'step':2, 'jump':1, 'firsthr':24, 'xstep': 24},
             'P12':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24, 'xstep': 12},
-            'WSP':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24, 'xstep': 12}
+            'WSP':{'size':[15,15], 'start':0, 'stop':15, 'step':1, 'jump':1, 'firsthr':24, 'xstep': 12},
+            'Q12':{'size':[12,12], 'start':0, 'stop':12, 'step':1, 'jump':1, 'firsthr':24, 'xstep': 12}
             }
         }
 
@@ -523,10 +535,11 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
                 'GFSX': (14, 10),
                 'NAM': (12, 6),
                 'GFS': (14, 7),
-            }
+            },
+            'Q12': (14, 10)
         }
 
-        if wxkey in ['X', 'N', 'P12']:
+        if wxkey in ['X', 'N', 'P12', 'Q12']:
             figgy = dictFigSize[wxkey]
         else:
             figgy = dictFigSize[wxkey][mostype]
@@ -582,6 +595,7 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
             #figsize = (14,10)
             figsize = determineFigureSize(wx, info['MOSTYPE'].replace('MOS GUIDANCE', '').strip())
             cbarticks = np.arange(0, 110, 10)
+            
         elif ((wx == 'X') or (wx == 'N')):
             # For MaxT and MinT, let matplotlib autoscale based on the values in the data.
             # That way, it's easy to see hot/cold trends at a glance.
@@ -641,7 +655,19 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
             #figsize = (14,10)
             figsize = determineFigureSize(wx, info['MOSTYPE'].replace('MOS GUIDANCE', '').strip())
             cbarticks = np.arange(vmin, vmax + cbarstep, cbarstep)
-            
+
+        elif wx == 'Q12':
+            cbarstep = 1
+            vmin = 0
+            vmax = 7 # the max value is 6, but use 7 here to make the colorbar look better.
+
+            # There are 7 categories for QPF, numbered 0-6. Extract 7 discrete colors from
+            # the colormap.
+            cmap = plt.get_cmap('YlGn', 7)
+
+            figsize = determineFigureSize(wx, info['MOSTYPE'].replace('MOS GUIDANCE', '').strip())
+            cbarticks = np.arange(vmin, vmax + cbarstep, cbarstep) + 0.5
+        
         else:
             # good luck
             cmap = plt.cm.Blues
@@ -667,7 +693,7 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
                     plt.text(c, r, int(plotthis[r,c]), fontsize = 20, horizontalalignment = 'center', verticalalignment = 'center')
 
         # Add a descriptive title
-        wxnames = {'X':'MaxT', 'N':'MinT', 'P12':'PoP12', 'WSP': 'WindSpd'}
+        wxnames = {'X':'MaxT', 'N':'MinT', 'P12':'PoP12', 'WSP': 'WindSpd', 'Q12': 'Q12'}
         strTitle = info['STANAME'] + ' ' + info['MOSTYPE'] + '\n' + info['RUNDATE'] + ' ' + info['RUNTIME'] + ' ' + wxnames[wx]
         plt.title(strTitle)
 
@@ -696,6 +722,11 @@ def makePlots(displayArrays, dtXaxis, info, prevRuns):
         # use a constant size and padding (units are inches) for a uniform look among plots
         cax = divider.append_axes('right', size = 0.25, pad = 0.2)
         cbar = plt.colorbar(im, cax = cax, extend = extend, ticks = cbarticks)
+
+        # Set colorbar tick labels for the special case of the discrete colorbar (Q12)
+        if wx == 'Q12':
+            ticklabels = [0, 1, 2, 3, 4, 5, 6]
+            cbar.set_ticklabels(ticklabels)
 
         plt.rcParams['font.size'] = 12
         plt.tight_layout()

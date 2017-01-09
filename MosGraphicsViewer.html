@@ -22,14 +22,14 @@
 		// Image names follow this format: STAID_MOS_WxElement.png
 		var mostypes = ['MEX', 'MAV', 'MET'];
 		var mos_names = ['GFSX', 'GFS', 'NAM']; // these values for the radio buttons match the divset ID
-		var wxtypes = ['X/N', 'P12', 'WSPD'];
-		var wx_names = ['XN', 'P12', 'WSPD']; // these values for the radio buttons match the divset ID
+		var wxtypes = ['X/N', 'P12', 'WSPD', 'Q12'];
+		var wx_names = ['XN', 'P12', 'WSPD','Q12']; // these values for the radio buttons match the divset ID
 		
 		// These next 3 variables must have the same length.
-		var wxelem = ['MaxT', 'MinT', 'PoP12', 'WindSpd']; //components of the image filenames
-		var wxelem_parent = ['XN', 'XN', 'P12', 'WSPD']; // these should match entries in wx_names
+		var wxelem = ['MaxT', 'MinT', 'PoP12', 'WindSpd', 'Q12']; //components of the image filenames
+		var wxelem_parent = ['XN', 'XN', 'P12', 'WSPD', 'Q12']; // these should match entries in wx_names
 		// Images sizes are given as [width, height]
-		var img_sizes = [[375, 600], [375, 600], [800, 600], [800, 600]];
+		var img_sizes = [[375, 600], [375, 600], [800, 600], [800, 600], [800, 600]];
 		// Special handling for wind speed images, which vary based on MOS type
 		var img_wspd = {'GFSX': [800, 600], 'GFS': [800, 400], 'NAM': [800, 400]};
 
@@ -268,7 +268,7 @@
 		div#container4controls {
 			margin-left: auto;
 			margin-right: auto;
-			width: 40%;
+			width: 45%;
 		}
 		
 		#radio_mos, #radio_wxelement {
